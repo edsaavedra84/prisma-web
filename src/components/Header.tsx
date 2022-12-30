@@ -6,13 +6,26 @@ import {FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, signOut} from
 import {auth} from "../config/firebase";
 import * as Icon from 'react-bootstrap-icons';
 import {signInWithEmailAndPassword} from "firebase/auth";
+import {Link, useNavigate } from "react-router-dom";
+import UserService from "../services/UserService";
+import IUserData from "../models/user.type";
 
-function Header() {
+function Header(props: any) {
+    const navigate = useNavigate();
+
     const [scroll, setScroll] = useState(false);
-    const [show, setShow] = useState(false);
+
     const [openMobile, setOpenMobile] = useState(false);
     const [logged, setLogged] = useState(false);
-    const handleClose = () => setShow(false);
+    const [userInfo, setUserInfo] = useState<IUserData | null>(null);
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => {
+        if(show){
+            setShow(false);
+            navigate("/");
+        }
+    }
     const handleShow = () => setShow(true);
 
     const handleOpenMobile = () => {
@@ -29,7 +42,25 @@ function Header() {
         signInWithPopup(auth, provider).then((data) => {
             console.log("logged =>" + data.user.displayName);
             console.log("logged =>" + data.user.email);
-            setLogged(true);
+            // setLogged(true);
+
+            if (auth?.currentUser && auth.currentUser?.uid) {
+                UserService.getById(auth.currentUser?.uid).then((existing: any) => {
+                    if(!existing) {
+                        const u : IUserData  = {
+                            name: (data.user.displayName) ? data.user.displayName : "",
+                            email: (data.user.email) ? data.user.email : "",
+                            key: data.user.uid,
+                            isInternalUser: false
+                        }
+
+                        UserService.createFromExternalChannel(u, data.user.uid).then(() => {
+                            console.log("wea");
+                        });
+                    }
+                })
+            }
+
             handleClose();
         }).catch((err) => {
             console.log("error while logging");
@@ -40,14 +71,16 @@ function Header() {
         })
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = (e: any) => {
+        e.target.disabled = true;
+
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 console.log("wiii");
-                setLogged(true);
-                handleClose();
             }).catch(() => {
                 console.log("oh no");
+        }). finally(() => {
+            e.target.disabled = false;
         });
     }
 
@@ -62,22 +95,54 @@ function Header() {
     const logout = () => {
         signOut(auth).then(() => {
             console.log("logged out");
-            setLogged(false);
+            // setLogged(false);
+            navigate("/");
         }).catch((err) => {
             console.log("err: " + err.message)
         });
     }
 
     const scrollTop = () => {
-        console.log("to top!");
         window.scrollTo(0, 0);
     }
 
+    const navigateTo = (button: any) => {
+        console.log(button);
+        handleClose();
+
+        if (button.target.dataset && button.target.dataset.meta) {
+            navigate(button.target.dataset.meta);
+        } else {
+            navigate("/");
+        }
+    }
+
     useEffect(() => {
+        if(props.loggedIn !== logged) {
+            setLogged(props.loggedIn);
+
+            if (props.loggedIn === true) {
+                if (auth?.currentUser && auth.currentUser?.uid) {
+                    UserService.getById(auth.currentUser?.uid).then((data: any) => {
+                        const da: IUserData = {
+                            name: data.name,
+                            email: data.email,
+                            isInternalUser: true
+                        }
+
+                        setUserInfo(da);
+                        handleClose();
+                    })
+                }
+            } else {
+                setUserInfo(null);
+            }
+        }
+
         window.addEventListener("scroll", () => {
             setScroll(window.scrollY > 50);
         });
-    });
+    }, [props.loggedIn, logged]);
 
     return (
         <header id="header" className={scroll ? "fixed-top d-flex align-items-center header-transparent header-scrolled" : "fixed-top d-flex align-items-center header-transparent"}>
@@ -88,7 +153,7 @@ function Header() {
 
                 <nav id="navbar" className={openMobile ? "navbar navbar-mobile" : "navbar"}>
                     <ul>
-                        <li><a className="dropdown-active " href="index.html">Inicio</a></li>
+                        <li><Link className="dropdown-item" to="/">Inicio</Link></li>
                         <li><a href="services.html">Servicios</a></li>
                         <li><a href="portfolio.html">Casos</a></li>
                         <li><a href="team.html">Equipo</a></li>
@@ -97,11 +162,12 @@ function Header() {
                         {(!logged) ?
                             <li>
                                 <Button variant="primary" className={"access-button"} onClick={handleShow}>Acceso pacientes</Button>
+                                <Button variant="warning" className={"m-4"} data-meta="/register" onClick={navigateTo}>Regístrese</Button>
                             </li>:
                             <li>
                                 <div className={"row"}>
                                     <div className={"col"}>
-                                        <span className={"loggedIn"}>Bienvenido {auth.currentUser?.displayName}</span>
+                                        <span className={"loggedIn"}>Bienvenido {userInfo?.name}</span>
                                     </div>
                                 </div>
                                 <div className={"row"}>
@@ -111,7 +177,6 @@ function Header() {
                                 </div>
                             </li>
                         }
-
                     </ul>
                     <i className={openMobile ? "bi mobile-nav-toggle bi-x":"bi bi-list mobile-nav-toggle"} onClick={handleOpenMobile}></i>
                 </nav>
@@ -173,14 +238,15 @@ function Header() {
                         </div>
 
                         <div className="text-center">
-                            <p>Aun no es paciente? <a href="#!">Regístrese</a></p>
+                            <p>Aun no es paciente?</p>
+                            <Button variant={"success"} data-meta="/register" onClick={navigateTo}>Regístrese</Button>
                         </div>
                     </form>
                 </Modal.Body>
             </Modal>
 
             <a href="#" className={scroll ? "back-to-top d-flex align-items-center justify-content-center active": "back-to-top d-flex align-items-center justify-content-center"} onClick={scrollTop}>
-                <Icon.ArrowBarUp width={"30px"}></Icon.ArrowBarUp>
+                <Icon.ArrowBarUp size={30}></Icon.ArrowBarUp>
             </a>
         </header>);
 }
