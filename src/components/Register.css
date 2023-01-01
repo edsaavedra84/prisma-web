@@ -1,0 +1,17 @@
+.form-control.error {
+  border-color: red;
+}
+
+.err-container {
+  height: 30px;
+
+}
+
+.form-container {
+  position: relative;
+}
+
+.validationErrors {
+  color: red;
+  font-size: 14px;
+}

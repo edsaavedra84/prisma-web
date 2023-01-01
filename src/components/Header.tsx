@@ -77,8 +77,9 @@ function Header(props: any) {
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 console.log("wiii");
-            }).catch(() => {
+            }).catch((err) => {
                 console.log("oh no");
+                console.log(err);
         }). finally(() => {
             e.target.disabled = false;
         });
