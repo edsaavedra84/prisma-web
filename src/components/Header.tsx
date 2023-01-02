@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import './Header.css';
-import {FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, signOut} from "@firebase/auth";
+import {FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, signOut, sendPasswordResetEmail} from "@firebase/auth";
 import {auth} from "../config/firebase";
 import * as Icon from 'react-bootstrap-icons';
 import {signInWithEmailAndPassword} from "firebase/auth";
@@ -93,6 +93,15 @@ function Header(props: any) {
         loginWithPopUp(gprov);
     }
 
+    const forgot = () => {
+        sendPasswordResetEmail(auth, email).then(() => {
+            console.log("what");
+        }).catch((err) => {
+            console.log("oh no");
+            console.log(err);
+        }).finally(() => {
+        });
+    }
     const logout = () => {
         signOut(auth).then(() => {
             console.log("logged out");
@@ -216,7 +225,7 @@ function Header(props: any) {
                             </div>
 
                             <div className="col">
-                                <a href="#!">Olvidó contraseña?</a>
+                                <a href="#!" onClick={forgot}>Olvidó contraseña?</a>
                             </div>
                         </div>
 

@@ -9,11 +9,20 @@ import Button from "react-bootstrap/Button";
 import {useNavigate } from "react-router-dom";
 import {signInWithEmailAndPassword} from "firebase/auth";
 import { useForm } from "react-hook-form";
+import {FormInput} from "./forms/form-input";
+
+export type RegistrationFormFields = {
+    email: string;
+    password: string;
+    name: string;
+    confirmPassword: string;
+    terms: boolean;
+};
 
 function Register() {
     const iconSize = 30;
     const navigate = useNavigate();
-    const { register, handleSubmit, watch, formState: { errors } , trigger} = useForm();
+    const { register, handleSubmit, watch, formState: { errors } , trigger} = useForm<RegistrationFormFields>();
 
     const password = watch("password");
     const email = watch("email");
@@ -80,80 +89,73 @@ function Register() {
                                 <div className="card-body">
                                     <div className="row justify-content-center">
                                         <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-
                                             <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Registro  paciente</p>
 
                                             <form className="mx-1 mx-md-4" onSubmit={handleSubmit(onSubmit)}>
+                                                <FormInput<RegistrationFormFields>
+                                                    id="name2"
+                                                    icon={<Icon.PersonFill size={iconSize}/>}
+                                                    name="name"
+                                                    type="text"
+                                                    label="Nombre"
+                                                    placeholder="Ingrese nombre"
+                                                    className="mb-2"
+                                                    register={register}
+                                                    rules={{
+                                                        required: 'Campo requerido'
+                                                    }}
+                                                    errors={errors}
+                                                />
 
-                                                <div className="d-flex flex-column form-container">
-                                                    <div className="d-flex flex-row align-items-center form-container">
-                                                        <div><Icon.PersonFill size={iconSize}/></div>
-                                                        <div className="form-outline flex-fill mx-2">
-                                                            <input {...register("name", { required: true })} type="text" id="name-form" placeholder="Ingrese su nombre"
-                                                                   className={errors.name ? "form-control error":"form-control"} aria-invalid={errors.name ? "true" : "false"} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="d-flex flex-row-reverse err-container">
-                                                        <span className={"validationErrors"}>
-                                                            {errors.firstName?.type === 'required' && <p role="alert">Campo requerido</p>}
-                                                            {errors.name &&  <p role="alert">Campo requerido</p>}
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                <FormInput<RegistrationFormFields>
+                                                    id="email"
+                                                    icon={<Icon.Mailbox2 size={iconSize}/>}
+                                                    type="email"
+                                                    name="email"
+                                                    label="Email Address"
+                                                    placeholder="Ingrese Email"
+                                                    className="mb-2"
+                                                    register={register}
+                                                    rules={{
+                                                        required: 'Campo requerido',
+                                                        pattern: {value: /^\S+@\S+\.\S+$/i, message: "Formato incorrecto de E-Mail"}
+                                                    }}
+                                                    errors={errors}
+                                                />
 
-                                                <div className="d-flex flex-column form-container">
-                                                    <div className="d-flex flex-row align-items-center form-container">
-                                                        <div><Icon.PersonFill size={iconSize}/></div>
-                                                        <div className="form-outline flex-fill mx-2">
-                                                            <input {...register("email", { required: true, pattern: /^\S+@\S+\.\S+$/i })} type="email" id="email-form" placeholder="Ingrese su E-Mail"
-                                                                   className={errors.email ? "form-control error":"form-control"}/>
-                                                        </div>
-                                                    </div>
-                                                    <div className="d-flex flex-row-reverse err-container">
-                                                        <span className={"validationErrors"}>
-                                                            {errors.email?.type === 'required' && <p role="alert">Campo requerido</p>}
-                                                            {errors.email?.type === 'pattern' && <p>Formato de e-mail incorrecto</p>}
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                <FormInput<RegistrationFormFields>
+                                                    id="password"
+                                                    icon={<Icon.LockFill size={iconSize}/>}
+                                                    type="password"
+                                                    name="password"
+                                                    label="Password"
+                                                    placeholder="Ingrese contraseña"
+                                                    className="mb-2"
+                                                    register={register}
+                                                    rules={{
+                                                        required: 'Campo requerido'
+                                                    }}
+                                                    errors={errors}
+                                                />
 
-                                                <div className="d-flex flex-column form-container">
-                                                    <div className="d-flex flex-row align-items-center form-container">
-                                                        <div><Icon.LockFill size={iconSize}/></div>
-                                                        <div className="form-outline flex-fill mx-2">
-                                                            <input {...register("password", { required: true, minLength: 6 })} type="password" id="password-form" placeholder="Ingrese contraseña"
-                                                                   className={errors.password ? "form-control error":"form-control"}/>
-                                                        </div>
-                                                    </div>
-                                                    <div className="d-flex flex-row-reverse err-container">
-                                                        <span className={"validationErrors"}>
-                                                            {errors.password?.type === 'required' && <p role="alert">Campo requerido</p>}
-                                                            {errors.password?.type === 'minLength' && <p role="alert">Minimo de 6 caracteres</p>}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="d-flex flex-column form-container">
-                                                    <div className="d-flex flex-row align-items-center form-container">
-                                                        <div><Icon.KeyFill size={iconSize}/></div>
-                                                        <div className="form-outline flex-fill mx-2">
-                                                            <input {...register("confirmPassword", {
-                                                                validate: (val: string) => {
-                                                                    if (val && val !== "" && watch('password') !== val) {
-                                                                        return "Your passwords do no match";
-                                                                    }
-                                                                } })} type="password" id="password-confirm-form" placeholder="Repita contraseña"
-                                                                   className={errors.confirmPassword ? "form-control error":"form-control"}/>
-                                                        </div>
-                                                    </div>
-                                                    <div className="d-flex flex-row-reverse err-container">
-                                                        <span className={"validationErrors"}>
-                                                            {errors.confirmPassword?.type === 'required' && <p role="alert">Campo requerido</p>}
-                                                            {errors.confirmPassword?.type === 'validate' && <p role="alert">Contraseñas no coinciden</p>}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
+                                                <FormInput<RegistrationFormFields>
+                                                    id="confirmPassword"
+                                                    icon={<Icon.KeyFill size={iconSize}/>}
+                                                    type="password"
+                                                    name="confirmPassword"
+                                                    label="confirmPassword"
+                                                    placeholder="Confirme contraseña"
+                                                    className="mb-2"
+                                                    register={register}
+                                                    rules={{
+                                                        validate: (val: string) => {
+                                                            if (val && val !== "" && watch('password') !== val) {
+                                                                return "Your passwords do no match";
+                                                            }
+                                                        }
+                                                    }}
+                                                    errors={errors}
+                                                />
 
                                                 <div className="d-flex flex-column form-container">
                                                     <div className="d-flex flex-row justify-content-center form-container">
