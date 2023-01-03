@@ -8,6 +8,9 @@ import Register from "./components/Register";
 import {Route, Routes, BrowserRouter} from "react-router-dom";
 import {onAuthStateChanged} from "@firebase/auth";
 import Profile from "./components/Profile";
+import Services from "./components/Services";
+import Team from "./components/Team";
+import Contact from "./components/Contact";
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -28,6 +31,9 @@ function App() {
                     <Route index element={<Home />}></Route>
                     <Route path="/register" element={<Register />}></Route>
                     <Route path="/profile" element={<Profile />}></Route>
+                    <Route path="/team" element={<Team />}></Route>
+                    <Route path="/services" element={<Services />}></Route>
+                    <Route path="/contact" element={<Contact />}></Route>
                 </Routes>
             </div>
 

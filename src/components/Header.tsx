@@ -114,8 +114,9 @@ function Header(props: any) {
     const logout = () => {
         signOut(auth).then(() => {
             console.log("logged out");
-            // setLogged(false);
+
             navigate("/");
+            closeMobileMenu();
         }).catch((err) => {
             console.log("err: " + err.message)
         });
@@ -182,10 +183,10 @@ function Header(props: any) {
                             "flex-row align-items-center" : !openMobile,
                         })}>
                             <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Inicio</Link>
-                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Servicios</Link>
+                            <Link className="dropdown-item" to="/services" onClick={closeMobileMenu}>Servicios</Link>
                             <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Casos</Link>
-                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Equipo</Link>
-                            <Link className="dropdown-item" to="/register" onClick={closeMobileMenu}>Contacto</Link>
+                            <Link className="dropdown-item" to="/team" onClick={closeMobileMenu}>Equipo</Link>
+                            <Link className="dropdown-item" to="/contact" onClick={closeMobileMenu}>Contacto</Link>
                                 {(!logged) ?
                                     <div className={classNames({
                                         "d-flex align-items-center" : true,
