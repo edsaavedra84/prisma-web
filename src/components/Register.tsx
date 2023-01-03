@@ -150,7 +150,7 @@ function Register() {
                                                     rules={{
                                                         validate: (val: string) => {
                                                             if (val && val !== "" && watch('password') !== val) {
-                                                                return "Your passwords do no match";
+                                                                return "Contraseñas no coinciden";
                                                             }
                                                         }
                                                     }}

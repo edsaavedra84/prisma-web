@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import Register from "./components/Register";
 import {Route, Routes, BrowserRouter} from "react-router-dom";
 import {onAuthStateChanged} from "@firebase/auth";
+import Profile from "./components/Profile";
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -26,6 +27,7 @@ function App() {
                 <Routes>
                     <Route index element={<Home />}></Route>
                     <Route path="/register" element={<Register />}></Route>
+                    <Route path="/profile" element={<Profile />}></Route>
                 </Routes>
             </div>
 

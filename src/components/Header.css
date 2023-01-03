@@ -2,7 +2,8 @@
 .loggedIn {
   color: #fff;
   font-weight: bolder;
-  padding: 30px
+  padding: 30px;
+  font-size: 10px;
 }
 
 /*--------------------------------------------------------------
@@ -47,7 +48,7 @@ a.back-to-top{
 # Header
 --------------------------------------------------------------*/
 #header {
-  height: 80px;
+  height: 60px;
   transition: all 0.5s;
   z-index: 997;
   transition: all 0.5s;
@@ -101,9 +102,7 @@ a.back-to-top{
 }
 
 
-.access-button{
-  background-color: #18910d;
-  margin-left: 100px;
+.access-button {
   text-align: center;
   border-radius: 10px;
   font-weight: bold;
@@ -242,9 +241,29 @@ a.back-to-top{
     display: block;
   }
 
-  .navbar ul {
+  .navbar a, .navbar button {
     display: none;
   }
+
+  .dropdown-item{
+    width: 0;
+  }
+}
+
+.menuContainer div {
+  width: 100%
+}
+.navbar-mobile a, .navbar-mobile button {
+  margin-top: 30px;
+  border-bottom: 1px black;
+}
+
+.navbar-mobile button {
+  text-align: center;
+}
+
+.navbar button {
+  margin-left: 30px;
 }
 
 .navbar-mobile {
@@ -264,7 +283,7 @@ a.back-to-top{
   right: 15px;
 }
 
-.navbar-mobile ul {
+.navbar-mobile .menuContainer {
   display: block;
   position: absolute;
   top: 55px;
@@ -276,6 +295,7 @@ a.back-to-top{
   overflow-y: auto;
   transition: 0.3s;
 }
+
 
 .navbar-mobile a,
 .navbar-mobile a:focus {

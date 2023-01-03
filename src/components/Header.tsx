@@ -9,6 +9,7 @@ import {signInWithEmailAndPassword} from "firebase/auth";
 import {Link, useNavigate } from "react-router-dom";
 import UserService from "../services/UserService";
 import IUserData from "../models/user.type";
+import classNames from "classnames";
 
 function Header(props: any) {
     const navigate = useNavigate();
@@ -23,13 +24,21 @@ function Header(props: any) {
     const handleClose = () => {
         if(show){
             setShow(false);
-            navigate("/");
         }
     }
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        closeMobileMenu();
+    }
 
     const handleOpenMobile = () => {
         setOpenMobile(!openMobile);
+    }
+
+    const closeMobileMenu = () => {
+        if (openMobile) {
+            setOpenMobile(false);
+        }
     }
 
     const [email, setEmail] = useState("");
@@ -119,6 +128,7 @@ function Header(props: any) {
     const navigateTo = (button: any) => {
         console.log(button);
         handleClose();
+        closeMobileMenu();
 
         if (button.target.dataset && button.target.dataset.meta) {
             navigate(button.target.dataset.meta);
@@ -161,33 +171,50 @@ function Header(props: any) {
                     <div id={"logo"} className={scroll ? "logo-scrolled" : ""}></div>
                 </div>
 
-                <nav id="navbar" className={openMobile ? "navbar navbar-mobile" : "navbar"}>
-                    <ul>
-                        <li><Link className="dropdown-item" to="/">Inicio</Link></li>
-                        <li><a href="services.html">Servicios</a></li>
-                        <li><a href="portfolio.html">Casos</a></li>
-                        <li><a href="team.html">Equipo</a></li>
-                        <li><a href="contact.html">Contacto</a></li>
-
-                        {(!logged) ?
-                            <li>
-                                <Button variant="primary" className={"access-button"} onClick={handleShow}>Acceso pacientes</Button>
-                                <Button variant="warning" className={"m-4"} data-meta="/register" onClick={navigateTo}>Regístrese</Button>
-                            </li>:
-                            <li>
-                                <div className={"row"}>
-                                    <div className={"col"}>
-                                        <span className={"loggedIn"}>Bienvenido {userInfo?.name}</span>
+                <nav id="navbar" className={classNames({
+                    "navbar" : !openMobile,
+                    "navbar-mobile" : openMobile})
+                }>
+                    <div className="container d-flex justify-content-between menuContainer" id={"menuContainer"}>
+                        <div className={classNames({
+                            "d-flex" : true,
+                            "flex-column align-items-start" : openMobile,
+                            "flex-row align-items-center" : !openMobile,
+                        })}>
+                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Inicio</Link>
+                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Servicios</Link>
+                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Casos</Link>
+                            <Link className="dropdown-item" to="/" onClick={closeMobileMenu}>Equipo</Link>
+                            <Link className="dropdown-item" to="/register" onClick={closeMobileMenu}>Contacto</Link>
+                                {(!logged) ?
+                                    <div className={classNames({
+                                        "d-flex align-items-center" : true,
+                                        "flex-column" : openMobile,
+                                        "flex-row" : !openMobile,
+                                    })}>
+                                        <Button variant="success" className={"access-button"} onClick={handleShow}>Acceso pacientes</Button>
+                                        <Button variant="warning" className={"access-button"} data-meta="/register" onClick={navigateTo}>Regístrese</Button>
+                                    </div>:
+                                    <div className={classNames({
+                                        "d-flex align-items-center" : true,
+                                        "flex-column" : openMobile,
+                                        "flex-row" : !openMobile,
+                                    })}>
+                                        <div className={"row"}>
+                                            <div className={"d-flex flex-column"}>
+                                                <Link  to="/userProfile"  className={"loggedIn"}>Bienvenido {userInfo?.name}</Link>
+                                                <Button variant="warning" className={"access-button"} data-meta="/profile" onClick={navigateTo}>Acceder a perfil</Button>
+                                            </div>
+                                        </div>
+                                        <div className={"row"}>
+                                            <div className={"col"}>
+                                                <Button variant="danger" className={"access-button"} onClick={logout}>Salir</Button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className={"row"}>
-                                    <div className={"col"}>
-                                        <Button variant="secondary" className={"access-button"} onClick={logout}>Salir</Button>:
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    </ul>
+                                }
+                        </div>
+                    </div>
                     <i className={openMobile ? "bi mobile-nav-toggle bi-x":"bi bi-list mobile-nav-toggle"} onClick={handleOpenMobile}></i>
                 </nav>
 
