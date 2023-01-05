@@ -32,7 +32,7 @@ class UserService {
 
     createFromExternalChannel(user: IUserData, uid: string) {
         return setDoc(doc(db, "user", uid), user).then((data) => {
-            console.log("failed to regiuster user");
+            console.log("user registered!");
         }).catch((err) => {
             console.log(err);
             console.log("failed to regiuster user");

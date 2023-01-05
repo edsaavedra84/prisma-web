@@ -1,22 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {auth} from "../config/firebase";
-import UserService from "../services/UserService";
 import IUserData from "../models/user.type";
 
 function Profile() {
     const [user, setUser] = useState<IUserData | null>(null);
 
     useEffect(() => {
-        UserService.getById(auth.currentUser?.uid as string).then((data: any) => {
-            const da: IUserData = {
-                name: data.name,
-                email: data.email,
-                isInternalUser: true
-            }
+        const obj = JSON.parse(sessionStorage.user);
 
-            console.log("fethcing user data");
-            setUser(da);
-        })
+        setUser(obj);
     }, []);
 
     return (

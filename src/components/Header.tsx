@@ -49,27 +49,6 @@ function Header(props: any) {
 
     const loginWithPopUp = (provider: any) => {
         signInWithPopup(auth, provider).then((data) => {
-            console.log("logged =>" + data.user.displayName);
-            console.log("logged =>" + data.user.email);
-            // setLogged(true);
-
-            if (auth?.currentUser && auth.currentUser?.uid) {
-                UserService.getById(auth.currentUser?.uid).then((existing: any) => {
-                    if(!existing) {
-                        const u : IUserData  = {
-                            name: (data.user.displayName) ? data.user.displayName : "",
-                            email: (data.user.email) ? data.user.email : "",
-                            key: data.user.uid,
-                            isInternalUser: false
-                        }
-
-                        UserService.createFromExternalChannel(u, data.user.uid).then(() => {
-                            console.log("wea");
-                        });
-                    }
-                })
-            }
-
             handleClose();
         }).catch((err) => {
             console.log("error while logging");
@@ -85,9 +64,7 @@ function Header(props: any) {
 
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
-                console.log("wiii");
             }).catch((err) => {
-                console.log("oh no");
                 console.log(err);
         }). finally(() => {
             e.target.disabled = false;
@@ -106,15 +83,12 @@ function Header(props: any) {
         sendPasswordResetEmail(auth, email).then(() => {
             console.log("what");
         }).catch((err) => {
-            console.log("oh no");
             console.log(err);
         }).finally(() => {
         });
     }
     const logout = () => {
         signOut(auth).then(() => {
-            console.log("logged out");
-
             navigate("/");
             closeMobileMenu();
         }).catch((err) => {
@@ -127,7 +101,6 @@ function Header(props: any) {
     }
 
     const navigateTo = (button: any) => {
-        console.log(button);
         handleClose();
         closeMobileMenu();
 
@@ -145,6 +118,7 @@ function Header(props: any) {
             if (props.loggedIn === true) {
                 if (auth?.currentUser && auth.currentUser?.uid) {
                     UserService.getById(auth.currentUser?.uid).then((data: any) => {
+                        console.log(data);
                         const da: IUserData = {
                             name: data.name,
                             email: data.email,
